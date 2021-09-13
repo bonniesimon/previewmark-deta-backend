@@ -4,5 +4,8 @@
   "description": "Backend for PreviewMark",
   "main": "index.js",
   "author": "Bonnie Simon",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
