@@ -9,6 +9,12 @@ Backend for PreviewMark📙 build using Node, Express and Deta ❤.
 
 ```http
   POST /publish-page
+
+  request body  
+  {
+	  markdown: _string,
+	  date: _string
+  }
 ```
 
 | Parameter | Type     | Description                |
