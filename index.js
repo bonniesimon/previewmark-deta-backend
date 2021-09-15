@@ -19,19 +19,40 @@ const db = deta.Base("previewmark");
 
 
 /**
+ * Middleware to parse JSON for this app.
+ * This should come before route handlers in the code.
+ */
+app.use(express.json());
+
+
+/**
  * Routes
  */
 app.get('/', async (req, res) => {
-	const date = Date.now().toString();
-	try {
-		// const value = await db.insert({string: "hey this is the string", date: date});
-		// console.log(value);
-		console.log("Hey");
-	} catch (error) {
-		console.log(error);	
-	}
-	res.send('Hello World!')}
+	res.send('Welcome to the Backend of PreviewMark');
+}
 )
+
+app.post('/publish-page', async (req, res) => {
+	const {markdown, date} = req.body;
+	let responseJson;
+	try {
+		const resDeta = await db.put({markdown, date});
+		responseJson = {
+			...resDeta, 
+			status: 200,
+			completed: true	
+		}
+	} catch (error) {
+		responseJson = {
+			status: 501,
+			completed: false,
+			error: error
+		}
+	}
+
+	res.json(responseJson);	
+})
 
 /**
  * NO NEED FOR app.listen() when deploying to Deta Micros
