@@ -1,3 +1,4 @@
 ## TODO
 
-- [ ] Create /publish-page route
+- [x] Create /publish-page route
+- [x] Deploy to Deta Micros
