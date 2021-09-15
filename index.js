@@ -1,7 +1,13 @@
-// install express with `npm install express` 
 const express = require('express')
+const cors = require('cors');
 const app = express()
 require('dotenv').config();
+
+/**
+ * Setting up cors middleware
+ */
+app.use(cors());
+
 
 /**
  * Setting up the logger
@@ -82,9 +88,9 @@ app.get('/pages/:id', async (req, res) => {
  * NO NEED FOR app.listen() when deploying to Deta Micros
  * Deta Micros takes care of it.
  */
-// app.listen(process.env.DEV_PORT, ()=>{
-// 	console.log(`Server running successfully @ localhost:${process.env.DEV_PORT}`);
-// })
+app.listen(process.env.DEV_PORT, ()=>{
+	console.log(`Server running successfully @ localhost:${process.env.DEV_PORT}`);
+})
 
 // export 'app'
 module.exports = app
