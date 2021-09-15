@@ -37,15 +37,15 @@ app.post('/publish-page', async (req, res) => {
 	const {markdown, date} = req.body;
 	let responseJson;
 	try {
-		const resDeta = await db.put({markdown, date});
+		const resData = await db.put({markdown, date});
 		responseJson = {
-			...resDeta, 
+			...resData, 
 			status: 200,
 			completed: true	
 		}
 	} catch (error) {
 		responseJson = {
-			status: 501,
+			status: 503,
 			completed: false,
 			error: error
 		}
@@ -54,13 +54,37 @@ app.post('/publish-page', async (req, res) => {
 	res.json(responseJson);	
 })
 
+app.get('/pages/:id', async (req, res) => {
+	const {id} = req.params;
+	let responseJson;
+	try {
+		const resData = await db.get(id);
+		if(resData === null){
+			throw new Error('Item not found in table');
+		}
+		responseJson = {
+			...resData,
+			status:200,
+			completed: true
+		}
+	} catch (error) {
+		responseJson = {
+			status: 503,
+			completed: false,
+			error: error.message
+		}
+	}
+	res.json(responseJson);
+})
+
+
 /**
  * NO NEED FOR app.listen() when deploying to Deta Micros
  * Deta Micros takes care of it.
  */
-app.listen(process.env.DEV_PORT, ()=>{
-	console.log(`Server running successfully @ localhost:${process.env.DEV_PORT}`);
-})
+// app.listen(process.env.DEV_PORT, ()=>{
+// 	console.log(`Server running successfully @ localhost:${process.env.DEV_PORT}`);
+// })
 
 // export 'app'
 module.exports = app
