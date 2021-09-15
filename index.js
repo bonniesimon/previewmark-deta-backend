@@ -2,22 +2,27 @@
 const express = require('express')
 const app = express()
 require('dotenv').config();
-const morgan = require('morgan');
 
 /**
  * Setting up the logger
  */
+const morgan = require('morgan');
 app.use(morgan(':method :url :status :response-time ms - :res[content-length]'));
 
-const {Deta} = require('deta');
 
+/**
+ * Setting up deta base
+ */
+const {Deta} = require('deta');
 const deta = Deta(process.env.DETA_PROJECT_KEY);
 const db = deta.Base("previewmark");
 
-const date = Date.now().toString();
 
-
+/**
+ * Routes
+ */
 app.get('/', async (req, res) => {
+	const date = Date.now().toString();
 	try {
 		// const value = await db.insert({string: "hey this is the string", date: date});
 		// console.log(value);
@@ -28,13 +33,13 @@ app.get('/', async (req, res) => {
 	res.send('Hello World!')}
 )
 
+/**
+ * NO NEED FOR app.listen() when deploying to Deta Micros
+ * Deta Micros takes care of it.
+ */
 app.listen(process.env.DEV_PORT, ()=>{
 	console.log(`Server running successfully @ localhost:${process.env.DEV_PORT}`);
 })
-/**
- * NO NEED FOR app.listen
- * Deta Micros takes care of it.
- */
 
 // export 'app'
 module.exports = app
