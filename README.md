@@ -3,6 +3,13 @@
 
 Backend for PreviewMark📙 build using Node, Express and Deta ❤.
 
+## Docs
+
+To deploy the server to Deta Micro
+```bash
+  deta deploy
+```
+
 ## API Reference
 
 #### Post publish page
