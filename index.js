@@ -8,10 +8,10 @@ require('dotenv').config();
 /**
  * Setting up cors middleware
  */
-let whitelist = ['https://bonniesimon.github.io/preview-mark'];
-if(!process.env.DETA_RUNTIME){
-	whitelist.push('http://localhost:3000');
-}
+let whitelist = ['https://bonniesimon.github.io/preview-mark', 'http://localhost:3000'];
+// if(!process.env.DETA_RUNTIME){
+// 	whitelist.push('http://localhost:3000');
+// }
 var corsOptions = {
 	origin: function (origin, callback) {
 		if (whitelist.indexOf(origin) !== -1) {
