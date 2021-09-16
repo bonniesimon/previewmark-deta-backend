@@ -1,12 +1,27 @@
 const express = require('express')
 const cors = require('cors');
+const bodyParser = require('body-parser');
+
 const app = express()
 require('dotenv').config();
 
 /**
  * Setting up cors middleware
  */
-app.use(cors());
+let whitelist = ['https://bonniesimon.github.io/preview-mark'];
+if(!process.env.DETA_RUNTIME){
+	whitelist.push('http://localhost:3000');
+}
+var corsOptions = {
+	origin: function (origin, callback) {
+		if (whitelist.indexOf(origin) !== -1) {
+			callback(null, true)
+		} else {
+			callback(new Error('Not allowed by CORS'))
+		}
+}
+}
+app.use(cors(corsOptions));
 
 
 /**
@@ -28,7 +43,10 @@ const db = deta.Base("previewmark");
  * Middleware to parse JSON for this app.
  * This should come before route handlers in the code.
  */
-app.use(express.json());
+// app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(express.json())
+
 
 
 /**
@@ -42,18 +60,27 @@ app.get('/', async (req, res) => {
 app.post('/publish-page', async (req, res) => {
 	const {markdown, date} = req.body;
 	let responseJson;
-	try {
-		const resData = await db.put({markdown, date});
+	if(!markdown || !date){
 		responseJson = {
-			...resData, 
-			status: 200,
-			completed: true	
-		}
-	} catch (error) {
-		responseJson = {
-			status: 503,
+			status: 404,
 			completed: false,
-			error: error
+			error: "Incomplete data sent"
+		}
+	}
+	else{
+		try {
+			const resData = await db.put({markdown, date});
+			responseJson = {
+				...resData, 
+				status: 200,
+				completed: true	
+			}
+		} catch (error) {
+			responseJson = {
+				status: 503,
+				completed: false,
+				error: error
+			}
 		}
 	}
 
@@ -88,9 +115,11 @@ app.get('/pages/:id', async (req, res) => {
  * NO NEED FOR app.listen() when deploying to Deta Micros
  * Deta Micros takes care of it.
  */
-app.listen(process.env.DEV_PORT, ()=>{
-	console.log(`Server running successfully @ localhost:${process.env.DEV_PORT}`);
-})
+if(!process.env.DETA_RUNTIME){
+	app.listen(process.env.DEV_PORT, ()=>{
+		console.log(`Server running successfully @ localhost:${process.env.DEV_PORT}`);
+	})
+}
 
 // export 'app'
 module.exports = app
